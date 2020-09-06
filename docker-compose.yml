@@ -12,7 +12,7 @@ services:
 
   4d_participatory_api:
     container_name: 4d-participatory-api
-    image: emhayusa/4d-participatory-api:1.0
+    image: emhayusa/4d_participatory_api:1.0
     ports: 
       - "8001:8001"
     links: 
@@ -31,7 +31,7 @@ services:
     
   4d_participatory_app:
     container_name: 4d-participatory-app
-    image: emhayusa/4d-participatory-app:1.1
+    image: emhayusa/4d_participatory_app:1.1
     ports: 
       - "8002:8000"
     links: 
