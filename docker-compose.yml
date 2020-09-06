@@ -1,0 +1,48 @@
+version: "3"
+services: 
+  citydb:
+    container_name: citydb-container
+    image: tumgis/3dcitydb-postgis
+    ports: 
+      - "5431:5432"
+    environment: 
+      - "SRID=32748"
+      - "SRSNAME=urn:ogc:def:crs:EPSG:32748"
+      - "POSTGRES_PASSWORD=postgres"
+
+  4d_participatory_api:
+    container_name: 4d-participatory-api
+    image: emhayusa/4d-participatory-api:1.0
+    ports: 
+      - "8001:8001"
+    links: 
+      - citydb
+    depends_on:
+      - citydb
+    volumes:
+      - D:\GITHUB\4d_api:/opt/code/app
+    environment:
+      - "CITYDB_CONNECTION_SERVER=citydb"
+      - "CITYDB_CONNECTION_PORT=5432"
+      - "CITYDB_CONNECTION_SID=4d_participatory_app"
+      - "CITYDB_CONNECTION_USER=postgres"
+      - "CITYDB_CONNECTION_PASSWORD=postgres"
+      - "CITYDB_ENV=dev"
+    
+  4d_participatory_app:
+    container_name: 4d-participatory-app
+    image: emhayusa/4d-participatory-app:1.1
+    ports: 
+      - "8002:8000"
+    links: 
+      - 4d_participatory_api
+      - citydb
+    depends_on:
+      - 4d_participatory_api
+      - citydb
+    volumes:
+      - D:\GITHUB\4d_app:/opt/code/app
+      - D:\GITHUB\4d_config:/share/config
+    environment: 
+      - "URL_API=http://localhost:8001/"
+      - "SERVER_API=http://4d_participatory_api:8001/"
